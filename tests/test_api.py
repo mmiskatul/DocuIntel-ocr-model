@@ -135,3 +135,14 @@ def test_reconcile_endpoint(client):
     assert any(d["flag_type"] == "DUPLICATE" for d in data["discrepancies"])
     assert any(d["flag_type"] == "TIMING DIFF" for d in data["discrepancies"])
     assert any(d["flag_type"] == "MISSING RECEIPT" for d in data["discrepancies"])
+
+
+def test_embed_endpoint(client):
+    """Test 384-dimensional vector embedding generation endpoint."""
+    resp = client.post("/embed", json={"text": "Invoice from Tech Supplies Inc for $450", "model": "openai"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["dimension"] == 384
+    assert len(data["embeddings"]) == 1
+    assert len(data["embeddings"][0]) == 384
+

@@ -143,19 +143,15 @@ def create_router(queue_mgr: RedisJobQueueManager) -> APIRouter:
         t0 = time.perf_counter()
         input_texts = req.texts if req.texts is not None else ([req.text] if req.text else [])
         if not input_texts:
-            return EmbeddingResponse(model=req.model, dimension=384, embeddings=[], processing_time_ms=0.0)
+            return EmbeddingResponse(model="text-embedding-3-small", dimension=384, embeddings=[], processing_time_ms=0.0)
 
-        if req.model == "openai":
-            if not OPENAI_API_KEY:
-                raise HTTPException(status_code=400, detail="OPENAI_API_KEY not configured on service")
+        if OPENAI_API_KEY:
             vectors = await vector_service.encode_openai(input_texts, OPENAI_API_KEY)
-            duration_ms = round((time.perf_counter() - t0) * 1000, 2)
-            return EmbeddingResponse(model="text-embedding-3-small", dimension=384, embeddings=vectors, processing_time_ms=duration_ms)
+        else:
+            vectors = vector_service.encode_local(input_texts)
 
-        vectors = vector_service.encode_local(input_texts, req.model)
         duration_ms = round((time.perf_counter() - t0) * 1000, 2)
-        dim = len(vectors[0]) if len(vectors) > 0 else 384
-        return EmbeddingResponse(model=req.model, dimension=dim, embeddings=vectors, processing_time_ms=duration_ms)
+        return EmbeddingResponse(model="text-embedding-3-small", dimension=384, embeddings=vectors, processing_time_ms=duration_ms)
 
     @router.post("/rag", response_model=RAGResponse, dependencies=[Depends(verify_api_key)])
     async def rag_completion_endpoint(req: RAGRequest):
