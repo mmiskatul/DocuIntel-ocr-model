@@ -71,7 +71,7 @@ def create_router(queue_mgr: RedisJobQueueManager) -> APIRouter:
         except Exception as exc:
             raise HTTPException(status_code=400, detail=f"Invalid image file: {exc}")
 
-        text, conf, boxes = ocr_service.run_ocr(img)
+        text, conf, boxes = await ocr_service.run_ocr_api(img)
         duration_ms = round((time.perf_counter() - t0) * 1000, 2)
         return OCRResponse(text=text, confidence=conf, boxes=boxes, processing_time_ms=duration_ms)
 
@@ -269,7 +269,7 @@ def create_router(queue_mgr: RedisJobQueueManager) -> APIRouter:
         except Exception as exc:
             raise HTTPException(status_code=400, detail=f"Invalid image file: {exc}")
 
-        text, conf, boxes = ocr_service.run_ocr(img)
+        text, conf, boxes = await ocr_service.run_ocr_api(img)
 
         vector: List[float] = []
         dim = 384
