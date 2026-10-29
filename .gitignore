@@ -1,0 +1,65 @@
+# ==============================================================================
+# DocuIntel OCR Microservice .gitignore - Secrets, Models & Python Artifacts
+# ==============================================================================
+
+# 1. Environment & Secret Configuration (NEVER COMMIT SECRETS)
+.env
+.env.*
+!.env.example
+*.env
+.env.local
+
+# 2. Certificates, Private Keys & Tokens
+*.pem
+*.key
+*.cert
+*.crt
+*.jwt
+*.token
+secrets.*
+credentials.json
+service-account*.json
+client_secret*.json
+
+# 3. Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 4. Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 5. Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 6. Build & Packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# 7. Model Downloads & Heavy Caches
+models/
+downloads/
+.cache/
+*.onnx.download
+
+# 8. Logs
+*.log
+
+# 9. OS & IDE Configuration
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
