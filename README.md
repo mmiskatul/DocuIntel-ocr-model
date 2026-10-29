@@ -8,14 +8,14 @@ Enterprise-grade microservice delivering deep-learning OCR, PyMuPDF digital docu
 
 ```text
 ocr-model/
-├── src/                               # Core Application Package
+├── src/                               # All Implementation Code
 │   ├── __init__.py
 │   ├── config.py                      # Environment configuration & model settings
 │   ├── main.py                        # FastAPI application factory & router setup
 │   ├── api/                           # HTTP Web API Layer
 │   │   ├── __init__.py
 │   │   ├── dependencies.py            # API key (X-API-Key) security & auth guards
-│   │   └── routes.py                  # All REST endpoints (OCR, PDF, Excel, LLM, Redis, Reconcile)
+│   │   └── routes.py                  # REST endpoints (OCR, PDF, Excel, LLM, Redis, Reconcile)
 │   ├── queue/                         # Asynchronous Background Processing
 │   │   ├── __init__.py
 │   │   ├── manager.py                 # Redis Job Queue Manager
@@ -42,7 +42,8 @@ ocr-model/
 │   └── test_api.py                    # Pytest test suite (8/8 test cases)
 ├── scripts/                           # Utility & Verification Scripts
 │   └── test_client.py                 # Automated CLI test & healthcheck client
-├── Dockerfile                         # Production multi-stage Docker container (`src.main:app`)
+├── main.py                            # Clean Microservice Root Entrypoint (`uvicorn main:app`)
+├── Dockerfile                         # Production multi-stage Docker container
 ├── requirements.txt                   # Microservice dependencies
 ├── README.md                          # Architecture & API documentation
 ├── .env.example                       # Environment configuration template
@@ -56,7 +57,7 @@ ocr-model/
 
 | Layer / Requirement | Technology Choice & Implementation |
 | :--- | :--- |
-| **API Framework** | FastAPI 0.115+, Pydantic v2 schemas (`src/main.py`, `src/api/routes.py`) |
+| **API Framework** | FastAPI 0.115+, Pydantic v2 schemas (`main.py`, `src/api/routes.py`) |
 | **Digital PDF Parsing** | PyMuPDF (`pymupdf` / `fitz`) with 150 DPI raster fallback (`src/services/pdf_parser.py`) |
 | **OCR Engine** | `RapidOCR-ONNX` (PP-OCRv4 CPU-optimized with angle classification) (`src/services/ocr_engine.py`) |
 | **Excel / CSV** | `pandas`, `openpyxl` with column normalization & row arithmetic (`src/services/spreadsheet_parser.py`) |
@@ -78,8 +79,10 @@ pip install -r requirements.txt
 # 2. Configure environment (optional API keys)
 cp .env.example .env
 
-# 3. Start the FastAPI microservice
-uvicorn src.main:app --host 0.0.0.0 --port 7860 --reload
+# 3. Start the FastAPI microservice using the root entrypoint
+python main.py
+# or:
+uvicorn main:app --host 0.0.0.0 --port 7860 --reload
 
 # 4. In a separate terminal, launch the Redis background worker
 python -m src.queue.worker
