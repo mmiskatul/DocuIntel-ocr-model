@@ -1,7 +1,7 @@
-"""Vector embedding request and response schemas."""
+"""Vector embedding and RAG request and response schemas."""
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel
 
 
@@ -17,3 +17,15 @@ class EmbeddingResponse(BaseModel):
     embeddings: List[List[float]]
     processing_time_ms: float
 
+
+class RAGRequest(BaseModel):
+    query: str
+    context: str
+    provider: Literal["auto", "openai", "anthropic", "deepseek", "grok"] = "auto"
+
+
+class RAGResponse(BaseModel):
+    query: str
+    answer: str
+    provider_used: str
+    processing_time_ms: float

@@ -25,7 +25,7 @@ from src.schemas.ocr import OCRResponse, ProcessResponse
 from src.schemas.spreadsheet import SpreadsheetResponse
 from src.schemas.jobs import JobEnqueueResponse, JobStatusResponse
 from src.schemas.reconciliation import ReconciliationResponse
-from src.schemas.embeddings import EmbeddingRequest, EmbeddingResponse
+from src.schemas.embeddings import EmbeddingRequest, EmbeddingResponse, RAGRequest, RAGResponse
 from src.services.ocr_engine import ocr_service
 from src.services.pdf_parser import pdf_parser_service
 from src.services.spreadsheet_parser import spreadsheet_parser_service
@@ -156,6 +156,25 @@ def create_router(queue_mgr: RedisJobQueueManager) -> APIRouter:
         duration_ms = round((time.perf_counter() - t0) * 1000, 2)
         dim = len(vectors[0]) if len(vectors) > 0 else 384
         return EmbeddingResponse(model=req.model, dimension=dim, embeddings=vectors, processing_time_ms=duration_ms)
+
+    @router.post("/rag", response_model=RAGResponse, dependencies=[Depends(verify_api_key)])
+    async def rag_completion_endpoint(req: RAGRequest):
+        """High-speed RAG generation answering natural language financial queries over retrieved context."""
+        t0 = time.perf_counter()
+        keys = {
+            "anthropic": ANTHROPIC_API_KEY,
+            "openai": OPENAI_API_KEY,
+            "deepseek": DEEPSEEK_API_KEY,
+            "xai": XAI_API_KEY,
+        }
+        answer, provider_used = await llm_service.answer_rag(req.query, req.context, req.provider, keys)
+        duration_ms = round((time.perf_counter() - t0) * 1000, 2)
+        return RAGResponse(
+            query=req.query,
+            answer=answer,
+            provider_used=provider_used,
+            processing_time_ms=duration_ms,
+        )
 
     @router.post("/validate", response_model=ValidationResult)
     def validate_invoice_endpoint(data: InvoiceDataSchema):

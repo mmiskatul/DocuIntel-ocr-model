@@ -27,6 +27,8 @@ from src.schemas.reconciliation import (
 from src.schemas.embeddings import (
     EmbeddingRequest,
     EmbeddingResponse,
+    RAGRequest,
+    RAGResponse,
 )
 
 __all__ = [
@@ -47,5 +49,6 @@ __all__ = [
     "ReconciliationResponse",
     "EmbeddingRequest",
     "EmbeddingResponse",
+    "RAGRequest",
+    "RAGResponse",
 ]
-
