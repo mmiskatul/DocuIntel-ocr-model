@@ -50,3 +50,4 @@ class PDFParserService:
 
 
 pdf_parser_service = PDFParserService()
+

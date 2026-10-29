@@ -55,3 +55,4 @@ if __name__ == "__main__":
     parser.add_argument("--key", default="", help="Optional X-API-Key")
     args = parser.parse_args()
     test_service(args.url, args.key)
+

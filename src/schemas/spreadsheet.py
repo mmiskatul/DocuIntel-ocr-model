@@ -22,3 +22,4 @@ class SpreadsheetResponse(BaseModel):
     total_amount: float
     rows: List[SpreadsheetRowSchema]
     processing_time_ms: float
+

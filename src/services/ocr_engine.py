@@ -43,3 +43,4 @@ class OCREngineService:
 
 
 ocr_service = OCREngineService()
+

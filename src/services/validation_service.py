@@ -55,3 +55,4 @@ class InvoiceValidationService:
 
 
 validation_service = InvoiceValidationService()
+

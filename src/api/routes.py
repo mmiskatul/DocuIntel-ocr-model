@@ -275,3 +275,4 @@ def create_router(queue_mgr: RedisJobQueueManager) -> APIRouter:
         )
 
     return router
+

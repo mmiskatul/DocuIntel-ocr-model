@@ -26,3 +26,4 @@ class ProcessResponse(BaseModel):
     embedding_model: str
     dimension: int
     processing_time_ms: float
+

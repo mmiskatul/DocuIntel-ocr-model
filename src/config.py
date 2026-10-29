@@ -15,3 +15,4 @@ HOST: str = os.getenv("HOST", "0.0.0.0")
 # Embedding model configurations
 DEFAULT_EMBEDDING_MODEL: Literal["bge-small", "minilm", "openai"] = "bge-small"
 EMBEDDING_DIMENSION: int = 384
+

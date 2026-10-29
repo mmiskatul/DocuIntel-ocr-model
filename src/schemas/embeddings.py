@@ -16,3 +16,4 @@ class EmbeddingResponse(BaseModel):
     dimension: int
     embeddings: List[List[float]]
     processing_time_ms: float
+

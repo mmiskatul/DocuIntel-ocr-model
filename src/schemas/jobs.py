@@ -22,3 +22,4 @@ class JobStatusResponse(BaseModel):
     result: Optional[Dict[str, Any]] = None
     created_at: float
     updated_at: float
+

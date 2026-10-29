@@ -81,3 +81,4 @@ class RedisJobQueueManager:
             except Exception:
                 pass
         return self.fallback_jobs.get(job_id)
+

@@ -47,3 +47,4 @@ class ExtractResponse(BaseModel):
     uncertain_fields: List[str] = Field(default_factory=list)
     ocr_confidence: float = 0.0
     processing_time_ms: float
+

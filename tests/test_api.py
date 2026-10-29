@@ -8,7 +8,11 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app import app, _parse_pdf_with_pymupdf, _parse_spreadsheet_with_pandas, validate_invoice_pydantic, InvoiceDataSchema, LineItemSchema
+from src.main import app
+from src.schemas.invoice import InvoiceDataSchema, LineItemSchema
+from src.services.pdf_parser import pdf_parser_service
+from src.services.spreadsheet_parser import spreadsheet_parser_service
+from src.services.validation_service import validation_service
 
 
 @pytest.fixture
@@ -47,7 +51,7 @@ def test_pydantic_validation_clean_invoice():
             LineItemSchema(description="Item 2", quantity=1, unit_price=50.0, amount=50.0),
         ],
     )
-    res = validate_invoice_pydantic(data)
+    res = validation_service.validate(data)
     assert res.is_valid is True
     assert res.needs_manual_review is False
     assert len(res.issues) == 0
@@ -64,7 +68,7 @@ def test_pydantic_validation_math_mismatch():
         total=125.0,  # Expected 110, difference 15
         currency="USD",
     )
-    res = validate_invoice_pydantic(data)
+    res = validation_service.validate(data)
     assert res.is_valid is False
     assert res.needs_manual_review is True
     assert any(i.code == "total_mismatch" for i in res.issues)
@@ -77,7 +81,7 @@ def test_pymupdf_pdf_parser():
     page.insert_text((50, 72), "INVOICE #INV-PYMUPDF-2026\nTotal: $1,250.00\nSupplier: PyMuPDF Test")
     pdf_bytes = doc.tobytes()
 
-    text, conf, boxes, page_count = _parse_pdf_with_pymupdf(pdf_bytes)
+    text, conf, boxes, page_count = pdf_parser_service.parse_pdf(pdf_bytes)
     assert page_count == 1
     assert "INV-PYMUPDF-2026" in text
     assert "$1,250.00" in text
@@ -94,7 +98,7 @@ def test_pandas_openpyxl_spreadsheet_parser():
     df.to_excel(buf, index=False, engine="openpyxl")
     buf.seek(0)
 
-    result = _parse_spreadsheet_with_pandas(buf.getvalue(), "ledger.xlsx")
+    result = spreadsheet_parser_service.parse(buf.getvalue(), "ledger.xlsx")
     assert result["row_count"] == 2
     assert result["total_amount"] == 195.40
     assert result["rows"][0].transaction == "DHL Express"

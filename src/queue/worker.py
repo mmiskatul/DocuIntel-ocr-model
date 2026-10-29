@@ -73,3 +73,9 @@ def run_worker_loop(redis_url: str = REDIS_URL):
         except Exception as e:
             logger.error(f"Error processing background job: {e}")
             time.sleep(2)
+
+
+if __name__ == "__main__":
+    run_worker_loop()
+
+
